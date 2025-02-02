@@ -1,11 +1,10 @@
 import Exceptions.InvalidInputException;
-import appliances.Appliance;
 
 import java.util.Scanner;
 
 public class CheapApplianceApp {
-    static private Scanner sc = new Scanner(System.in);
-    static private ConnectionFactory cf = new ConnectionFactory();
+    static private final Scanner sc = new Scanner(System.in);
+    static private final ConnectionFactory cf = new ConnectionFactory();
     public static void main(String[] args) {
         System.out.println("||==========================================||");
         System.out.println("||      Welcome to Cheap Appliances!        ||");
@@ -23,7 +22,6 @@ public class CheapApplianceApp {
             if (userChoice <=0 || userChoice > 5) {
                 throw new Exception("Invalid option");
             }
-            System.out.println("Appliances added successfully");
             switch (userChoice)
             {
                 case 1: // list all items stored into the database
@@ -33,12 +31,16 @@ public class CheapApplianceApp {
                     Utilities.searchBrand(cf.getConnection());
                     break;
                 case 3:
+                    Utilities.searchItem(cf.getConnection());
                     break;
                 case 4:
+                    Utilities.checkOut(cf.getConnection());
                     break;
                 case 5:
-                    break;
+                    return;
+
             }
+
         }
         catch (Exception e)
         {
@@ -49,8 +51,20 @@ public class CheapApplianceApp {
                 main(args);
             }
         }
+        recallMain();
 
+    }
 
+    private static void recallMain()
+    {
+        System.out.println();
+        System.out.println();
+        System.out.println("||=====================================================||");
+        System.out.println("||          You will be redirected to menu             ||");
+        System.out.println("|| Press any key or ENTER to go back to the main menu  ||");
+        System.out.println("||=====================================================||");
 
+        sc.nextLine();
+        main(new String[] {""});
     }
 }

@@ -9,7 +9,7 @@ import java.util.Set;
 
 public class ApplianceDAO {
 
-    private Connection connection;
+    private final Connection connection;
     public ApplianceDAO(Connection conn)
     {
         this.connection = conn;
@@ -56,8 +56,8 @@ public class ApplianceDAO {
                 int wattage = rs.getInt("wattage");
                 String colour = rs.getString("colour");
                 double price = rs.getDouble("price");
-                String item_type = rs.getString("item_type");
-                applianceSet.add(new Appliance(itemNumber, brand, quantity, wattage, colour, price, item_type));
+                String appliance_type = rs.getString("appliance_type");
+                applianceSet.add(new Appliance(itemNumber, brand, quantity, wattage, colour, price, appliance_type));
             }
             ps.close();
             rs.close();
@@ -91,5 +91,52 @@ public class ApplianceDAO {
             throw new RuntimeException(e);
         }
         return applianceSet;
+    }
+
+    public Appliance searchItem(String itemNumber)
+    {
+        Appliance appliance = null;
+        String sql = "SELECT * FROM appliance WHERE item_number = (?)";
+        try
+        {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, itemNumber);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next())
+            {
+                String brand = rs.getString("brand");
+                int quantity = rs.getInt("quantity");
+                int wattage = rs.getInt("wattage");
+                String colour = rs.getString("colour");
+                double price = rs.getDouble("price");
+                String item_type = rs.getString("appliance_type");
+
+                appliance = new Appliance(itemNumber, brand, quantity, wattage, colour, price, item_type);
+            }
+            ps.close();
+            rs.close();
+            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return appliance;
+    }
+
+    public void updateQuantity(String itemNumber, int quantity)
+    {
+        String sql = "UPDATE appliance SET quantity = quantity + (?) WHERE item_number = (?)";
+        try{
+            connection.prepareStatement(sql);
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, quantity);
+            ps.setString(2, itemNumber);
+            ps.executeUpdate();
+            ps.close();
+            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
